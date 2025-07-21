@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
   initializeCardAnimations();
   initializeHeroTypewriter();
   initializeInteractiveButtons();
+  initializeMobileMenu();
 
   // Orange particle system
   function initializeParticleSystem() {
@@ -27,7 +28,7 @@ document.addEventListener("DOMContentLoaded", function () {
     document.body.appendChild(particlesContainer);
 
     // Create floating orange particles
-    for (let i = 0; i < 60; i++) {
+    for (let i = 0; i < 15; i++) {
       const particle = document.createElement("div");
       const size = Math.random() * 6 + 3;
       const opacity = Math.random() * 0.6 + 0.2;
@@ -77,8 +78,13 @@ document.addEventListener("DOMContentLoaded", function () {
     document.head.appendChild(particleStyle);
   }
 
-  // Enhanced cursor effect with orange theme
+  // Enhanced cursor effect with orange theme (desktop only)
   function initializeCursorEffect() {
+    // Skip cursor effect on mobile devices
+    if (window.innerWidth <= 768 || "ontouchstart" in window) {
+      return;
+    }
+
     const cursor = document.createElement("div");
     cursor.className = "custom-cursor";
     cursor.style.cssText = `
@@ -137,7 +143,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-
   // Enhanced scroll progress with orange theme
   function initializeScrollEffects() {
     const progress = document.createElement("div");
@@ -155,31 +160,36 @@ document.addEventListener("DOMContentLoaded", function () {
         `;
     document.body.appendChild(progress);
 
-    // Intersection Observer for scroll animations
-    const observerOptions = {
-      threshold: 0.1,
-      rootMargin: "-10% 0px -10% 0px",
-    };
+    // Simplified scroll animations (desktop only)
+    if (window.innerWidth > 768) {
+      const observerOptions = {
+        threshold: 0.2,
+        rootMargin: "0px",
+      };
 
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.style.opacity = "1";
-          entry.target.style.transform = "translateY(0)";
-        }
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+            observer.unobserve(entry.target); // Stop observing once visible
+          }
+        });
+      }, observerOptions);
+
+      // Only observe cards, not titles
+      const animatedElements = document.querySelectorAll(
+        ".feature-card, .category-card"
+      );
+      animatedElements.forEach((element) => {
+        observer.observe(element);
       });
-    }, observerOptions);
-
-    // Observe elements for animation
-    const animatedElements = document.querySelectorAll(
-      ".feature-card, .category-card, .section-title"
-    );
-    animatedElements.forEach((element) => {
-      element.style.opacity = "0";
-      element.style.transform = "translateY(50px)";
-      element.style.transition = "all 0.8s cubic-bezier(0.4, 0, 0.2, 1)";
-      observer.observe(element);
-    });
+    } else {
+      // On mobile, show all cards immediately
+      const cards = document.querySelectorAll(".feature-card, .category-card");
+      cards.forEach((card) => {
+        card.classList.add("visible");
+      });
+    }
 
     // Update scroll progress
     window.addEventListener("scroll", () => {
@@ -278,19 +288,26 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // Card hover animations
+  // Card hover animations (desktop only)
   function initializeCardAnimations() {
+    // Skip card animations on mobile
+    if (window.innerWidth <= 768) {
+      return;
+    }
+
     const cards = document.querySelectorAll(".feature-card, .category-card");
 
     cards.forEach((card) => {
       card.addEventListener("mouseenter", function () {
-        this.style.transform = "translateY(-15px) scale(1.02) rotateX(5deg)";
-        this.style.boxShadow = "0 25px 60px rgba(255, 140, 0, 0.3)";
+        if (window.innerWidth > 768) {
+          this.style.transform = "translateY(-8px)";
+        }
       });
 
       card.addEventListener("mouseleave", function () {
-        this.style.transform = "translateY(0) scale(1) rotateX(0deg)";
-        this.style.boxShadow = "0 10px 40px rgba(255, 140, 0, 0.1)";
+        if (window.innerWidth > 768) {
+          this.style.transform = "translateY(0)";
+        }
       });
     });
   }
@@ -300,32 +317,33 @@ document.addEventListener("DOMContentLoaded", function () {
     const heroTitle = document.querySelector(".hero-title");
     const heroDescription = document.querySelector(".hero-description");
     const heroActions = document.querySelector(".hero-actions");
-    
+
     // Add staggered animations to hero elements
     if (heroTitle) {
       // Title already has CSS animation, just ensure it's visible
-      heroTitle.style.opacity = '0';
+      heroTitle.style.opacity = "0";
     }
-    
+
     if (heroDescription) {
-      heroDescription.style.opacity = '0';
-      heroDescription.style.transform = 'translateY(20px)';
-      heroDescription.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
-      
+      heroDescription.style.opacity = "0";
+      heroDescription.style.transform = "translateY(20px)";
+      heroDescription.style.transition =
+        "all 0.8s cubic-bezier(0.4, 0, 0.2, 1)";
+
       setTimeout(() => {
-        heroDescription.style.opacity = '0.9';
-        heroDescription.style.transform = 'translateY(0)';
+        heroDescription.style.opacity = "0.9";
+        heroDescription.style.transform = "translateY(0)";
       }, 400);
     }
-    
+
     if (heroActions) {
-      heroActions.style.opacity = '0';
-      heroActions.style.transform = 'translateY(20px)';
-      heroActions.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
-      
+      heroActions.style.opacity = "0";
+      heroActions.style.transform = "translateY(20px)";
+      heroActions.style.transition = "all 0.8s cubic-bezier(0.4, 0, 0.2, 1)";
+
       setTimeout(() => {
-        heroActions.style.opacity = '1';
-        heroActions.style.transform = 'translateY(0)';
+        heroActions.style.opacity = "1";
+        heroActions.style.transform = "translateY(0)";
       }, 800);
     }
   }
@@ -365,14 +383,16 @@ document.addEventListener("DOMContentLoaded", function () {
         }, 800);
       });
 
-      // Magnetic effect
-      button.addEventListener("mouseenter", function (e) {
-        this.style.transform = "translateY(-3px) scale(1.05)";
-      });
+      // Simple hover effect (only on desktop)
+      if (window.innerWidth > 768) {
+        button.addEventListener("mouseenter", function () {
+          this.style.transform = "translateY(-2px)";
+        });
 
-      button.addEventListener("mouseleave", function (e) {
-        this.style.transform = "translateY(0) scale(1)";
-      });
+        button.addEventListener("mouseleave", function () {
+          this.style.transform = "translateY(0)";
+        });
+      }
     });
 
     // Add ripple animation
@@ -388,79 +408,88 @@ document.addEventListener("DOMContentLoaded", function () {
     document.head.appendChild(rippleStyle);
   }
 
-  // Download button interactions
+  // Download button interactions (simplified)
   const downloadBtns = document.querySelectorAll(".download-btn");
   downloadBtns.forEach((btn) => {
     btn.addEventListener("click", function (e) {
       e.preventDefault();
 
-      // Show success animation
-      const originalImg = this.querySelector("img");
-      const overlay = document.createElement("div");
-      overlay.style.cssText = `
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: linear-gradient(135deg, #FF8C00, #FFA500);
-                border-radius: 15px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: white;
-                font-weight: bold;
-                font-size: 0.9rem;
-                opacity: 0;
-                transition: opacity 0.3s;
-            `;
-      overlay.textContent = "준비 중...";
-
-      this.style.position = "relative";
-      this.appendChild(overlay);
+      // Simple feedback
+      const originalText = this.textContent || "다운로드";
+      this.style.opacity = "0.7";
 
       setTimeout(() => {
-        overlay.style.opacity = "1";
-      }, 100);
-
-      setTimeout(() => {
-        overlay.textContent = "곧 출시!";
-        setTimeout(() => {
-          overlay.style.opacity = "0";
-          setTimeout(() => {
-            overlay.remove();
-          }, 300);
-        }, 1000);
-      }, 1000);
+        this.style.opacity = "1";
+        alert("곧 출시 예정입니다!");
+      }, 200);
     });
   });
 
-  // Add parallax effect to hero section
-  window.addEventListener("scroll", () => {
-    const scrolled = window.pageYOffset;
-    const hero = document.querySelector(".hero");
-    if (hero) {
-      const speed = scrolled * 0.5;
-      hero.style.transform = `translateY(${speed}px)`;
-    }
-  });
+  // Simplified parallax effect (desktop only)
+  if (window.innerWidth > 768) {
+    let ticking = false;
 
-  // Add floating animation to phone mockup
-  const phoneMockup = document.querySelector(".phone-mockup");
-  if (phoneMockup) {
-    let mouseX = 0;
-    let mouseY = 0;
+    window.addEventListener("scroll", () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          const scrolled = window.pageYOffset;
+          const hero = document.querySelector(".hero");
+          if (hero && scrolled < window.innerHeight) {
+            hero.style.transform = `translateY(${scrolled * 0.2}px)`;
+          }
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+  }
 
-    document.addEventListener("mousemove", (e) => {
-      mouseX = (e.clientX - window.innerWidth / 2) / 50;
-      mouseY = (e.clientY - window.innerHeight / 2) / 50;
+  // Mobile menu functionality
+  function initializeMobileMenu() {
+    const mobileMenuBtn = document.getElementById("mobile-menu-btn");
+    const navLinks = document.querySelector(".nav-links");
+
+    if (!mobileMenuBtn || !navLinks) return;
+
+    mobileMenuBtn.addEventListener("click", function () {
+      this.classList.toggle("active");
+      navLinks.classList.toggle("mobile-open");
+
+      // Prevent body scroll when menu is open
+      if (navLinks.classList.contains("mobile-open")) {
+        document.body.style.overflow = "hidden";
+      } else {
+        document.body.style.overflow = "";
+      }
     });
 
-    function updatePhonePosition() {
-      phoneMockup.style.transform += ` translate(${mouseX}px, ${mouseY}px)`;
-      requestAnimationFrame(updatePhonePosition);
-    }
-    updatePhonePosition();
+    // Close menu when clicking on a nav link
+    const navLinkItems = navLinks.querySelectorAll("a");
+    navLinkItems.forEach((link) => {
+      link.addEventListener("click", () => {
+        mobileMenuBtn.classList.remove("active");
+        navLinks.classList.remove("mobile-open");
+        document.body.style.overflow = "";
+      });
+    });
+
+    // Close menu when clicking outside
+    document.addEventListener("click", function (e) {
+      if (!mobileMenuBtn.contains(e.target) && !navLinks.contains(e.target)) {
+        mobileMenuBtn.classList.remove("active");
+        navLinks.classList.remove("mobile-open");
+        document.body.style.overflow = "";
+      }
+    });
+
+    // Close menu on window resize if screen gets larger
+    window.addEventListener("resize", function () {
+      if (window.innerWidth > 768) {
+        mobileMenuBtn.classList.remove("active");
+        navLinks.classList.remove("mobile-open");
+        document.body.style.overflow = "";
+      }
+    });
   }
 
   // Set current year in footer
