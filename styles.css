@@ -508,10 +508,12 @@ body::before {
 }
 
 .app-preview {
-  padding: 25px;
+  width: 100%;
+  padding: 0 25px 25px 25px;
   height: 100%;
   display: flex;
   flex-direction: column;
+  flex: 1;
 }
 
 .app-header {
@@ -520,9 +522,9 @@ body::before {
   background: var(--primary-gradient);
   color: white;
   font-weight: 700;
-  margin: -25px -25px 25px;
   font-size: 1.1rem;
   box-shadow: 0 4px 15px rgba(255, 140, 0, 0.3);
+  width: 100%;
 }
 
 .app-content {
