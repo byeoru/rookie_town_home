@@ -81,7 +81,11 @@ document.addEventListener("DOMContentLoaded", function () {
   // Enhanced cursor effect with orange theme (desktop only)
   function initializeCursorEffect() {
     // Skip cursor effect on mobile devices
-    if (window.innerWidth <= 768 || "ontouchstart" in window || /Mobi|Android/i.test(navigator.userAgent)) {
+    if (
+      window.innerWidth <= 768 ||
+      "ontouchstart" in window ||
+      /Mobi|Android/i.test(navigator.userAgent)
+    ) {
       return;
     }
 
@@ -161,35 +165,28 @@ document.addEventListener("DOMContentLoaded", function () {
     document.body.appendChild(progress);
 
     // Simplified scroll animations (desktop only)
-    if (window.innerWidth > 768) {
-      const observerOptions = {
-        threshold: 0.2,
-        rootMargin: "0px",
-      };
+    // Scroll animations for all devices
+    const observerOptions = {
+      threshold: 0.2,
+      rootMargin: "0px",
+    };
 
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("visible");
-            observer.unobserve(entry.target); // Stop observing once visible
-          }
-        });
-      }, observerOptions);
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+          observer.unobserve(entry.target); // Stop observing once visible
+        }
+      });
+    }, observerOptions);
 
-      // Only observe cards, not titles
-      const animatedElements = document.querySelectorAll(
-        ".feature-card, .category-card"
-      );
-      animatedElements.forEach((element) => {
-        observer.observe(element);
-      });
-    } else {
-      // On mobile, show all cards immediately
-      const cards = document.querySelectorAll(".feature-card, .category-card");
-      cards.forEach((card) => {
-        card.classList.add("visible");
-      });
-    }
+    // Observe cards on all devices
+    const animatedElements = document.querySelectorAll(
+      ".feature-card, .category-card"
+    );
+    animatedElements.forEach((element) => {
+      observer.observe(element);
+    });
 
     // Update scroll progress
     window.addEventListener("scroll", () => {
@@ -290,24 +287,26 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Card hover animations (desktop only)
   function initializeCardAnimations() {
-    // Skip card animations on mobile
-    if (window.innerWidth <= 768) {
-      return;
-    }
-
     const cards = document.querySelectorAll(".feature-card, .category-card");
 
     cards.forEach((card) => {
       card.addEventListener("mouseenter", function () {
-        if (window.innerWidth > 768) {
-          this.style.transform = "translateY(-8px)";
-        }
+        this.style.transform = "translateY(-8px)";
       });
 
       card.addEventListener("mouseleave", function () {
-        if (window.innerWidth > 768) {
+        this.style.transform = "translateY(0)";
+      });
+
+      // Touch events for mobile
+      card.addEventListener("touchstart", function () {
+        this.style.transform = "translateY(-8px)";
+      });
+
+      card.addEventListener("touchend", function () {
+        setTimeout(() => {
           this.style.transform = "translateY(0)";
-        }
+        }, 200);
       });
     });
   }
