@@ -446,20 +446,87 @@ document.addEventListener("DOMContentLoaded", function () {
   // Mobile menu functionality
   function initializeMobileMenu() {
     const mobileMenuBtn = document.getElementById("mobile-menu-btn");
-    const navLinks = document.querySelector(".nav-links");
+    const navLinks = document.getElementById("nav-links");
 
-    if (!mobileMenuBtn || !navLinks) return;
+    console.log("Mobile menu button:", mobileMenuBtn);
+    console.log("Nav links:", navLinks);
+    console.log(
+      "Nav links computed style:",
+      window.getComputedStyle(navLinks).display
+    );
 
-    mobileMenuBtn.addEventListener("click", function () {
-      this.classList.toggle("active");
-      navLinks.classList.toggle("mobile-open");
+    if (!mobileMenuBtn || !navLinks) {
+      console.error("Mobile menu elements not found!");
+      return;
+    }
 
-      // Prevent body scroll when menu is open
-      if (navLinks.classList.contains("mobile-open")) {
-        document.body.style.overflow = "hidden";
-      } else {
+    mobileMenuBtn.addEventListener("click", function (e) {
+      e.preventDefault();
+      console.log("Mobile menu button clicked!");
+
+      // 기존 메뉴 패널이 있으면 제거
+      const existingMenu = document.querySelector(".mobile-menu-panel");
+      if (existingMenu) {
+        existingMenu.remove();
+        this.classList.remove("active");
         document.body.style.overflow = "";
+        console.log("Menu closed - panel removed");
+        return;
       }
+
+      // 새 메뉴 패널 생성
+      const menuPanel = document.createElement("div");
+      menuPanel.className = "mobile-menu-panel";
+      menuPanel.innerHTML = `
+        <a href="#features">기능</a>
+        <a href="#categories">카테고리</a>
+        <a href="#download">다운로드</a>
+        <a href="#contact">문의</a>
+      `;
+
+      menuPanel.style.cssText = `
+        position: fixed;
+        top: 65px;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background: rgba(255, 255, 255, 0.98);
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        padding: 2rem 0;
+        z-index: 99999;
+        border-top: 1px solid rgba(255, 140, 0, 0.2);
+      `;
+
+      // 메뉴 링크 스타일
+      const menuLinks = menuPanel.querySelectorAll("a");
+      menuLinks.forEach((link) => {
+        link.style.cssText = `
+          font-size: 1.2rem;
+          padding: 1rem 2rem;
+          margin: 0.5rem 0;
+          width: 80%;
+          text-align: center;
+          border-radius: 15px;
+          color: #FF8C00;
+          text-decoration: none;
+          transition: background 0.3s ease;
+        `;
+
+        link.addEventListener("click", () => {
+          menuPanel.remove();
+          this.classList.remove("active");
+          document.body.style.overflow = "";
+        });
+      });
+
+      // 문서에 추가
+      document.body.appendChild(menuPanel);
+      this.classList.add("active");
+      document.body.style.overflow = "hidden";
+      console.log("Menu opened - new panel created and added to DOM");
     });
 
     // Close menu when clicking on a nav link
