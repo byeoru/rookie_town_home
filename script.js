@@ -81,7 +81,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Enhanced cursor effect with orange theme (desktop only)
   function initializeCursorEffect() {
     // Skip cursor effect on mobile devices
-    if (window.innerWidth <= 768 || "ontouchstart" in window) {
+    if (window.innerWidth <= 768 || "ontouchstart" in window || /Mobi|Android/i.test(navigator.userAgent)) {
       return;
     }
 

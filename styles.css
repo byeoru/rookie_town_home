@@ -1098,9 +1098,10 @@ body::before {
   }
 
   .download-buttons {
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     gap: 1.5rem;
+    justify-content: center;
   }
 }
 
@@ -1279,6 +1280,14 @@ body::before {
   .footer-info p {
     font-size: 0.9rem;
   }
+
+  .download-btn img[src*="app_store_badge"] {
+    height: 45px;
+  }
+
+  .download-btn img[src*="google_play_badge"] {
+    height: 45px;
+  }
 }
 
 /* Enhanced Animations */
@@ -1314,8 +1323,10 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Magnetic cursor effect */
-.btn,
-.nav-links a {
-  cursor: none;
+/* Magnetic cursor effect (desktop only) */
+@media (min-width: 769px) and (hover: hover) and (pointer: fine) {
+  .btn,
+  .nav-links a {
+    cursor: none;
+  }
 }
